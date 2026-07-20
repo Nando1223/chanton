@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Chanton n' Chanton – El juego ecuatoriano de listas para 2 jugadores online." />
+  <title>Chanton n' Chanton 🇪🇨</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ========== PANTALLA DE INICIO ========== -->
+  <div id="screen-start" class="screen active">
+    <div class="start-wrapper">
+      <h1 class="title-main">Chanton<br/><span>n' Chanton</span></h1>
+      <p class="subtitle">🎉 ¡Bienvenidos al juego! ¿Listos para competir? 🔥✏️</p>
+
+      <div class="room-form">
+        <div class="input-group">
+          <label for="my-name">👤 Tu nombre</label>
+          <input id="my-name" type="text" placeholder="Escribe tu nombre" maxlength="20" autocomplete="off" />
+        </div>
+        <div class="input-group">
+          <label for="room-code">🔑 Código de sala</label>
+          <input id="room-code" type="text" placeholder="Ej: 1123" maxlength="10" autocomplete="off"
+                 oninput="this.value=this.value.toUpperCase()" />
+        </div>
+
+        <div class="room-error hidden" id="room-error">⚠️ <span id="room-error-msg">Error</span></div>
+
+        <div class="room-buttons">
+          <button class="btn btn-primary" id="btn-create" onclick="createRoom()">
+            🏠 Crear sala
+          </button>
+          <button class="btn btn-join" id="btn-join" onclick="joinRoom()">
+            🚀 Unirse
+          </button>
+        </div>
+
+        <p class="room-hint">Comparte el código con tu amigo para que se una</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PANTALLA DE ESPERA ========== -->
+  <div id="screen-waiting" class="screen">
+    <div class="waiting-wrapper">
+      <div class="waiting-anim">⏳</div>
+      <h2 class="waiting-title">Sala <span id="waiting-code">----</span></h2>
+      <p class="waiting-you">Tú: <strong id="waiting-my-name">—</strong></p>
+      <p class="waiting-msg" id="waiting-msg">Esperando al otro jugador...</p>
+      <div class="waiting-dots"><span></span><span></span><span></span></div>
+      <button class="btn btn-secondary btn-sm" onclick="leaveRoom()">✖ Salir</button>
+    </div>
+  </div>
+
+  <!-- ========== PANTALLA DE JUEGO ========== -->
+  <div id="screen-game" class="screen">
+
+    <!-- Header -->
+    <header class="game-header">
+      <div class="header-brand">
+        <span class="header-flag">🇪🇨</span>
+        <span class="header-title">Chanton n' Chanton</span>
+      </div>
+      <!-- Puntajes con nombres -->
+      <div class="score-center">
+        <div class="score-player-block p1-block">
+          <span class="score-player-name" id="score-name-p1">—</span>
+          <span class="score-player-pts" id="score-p1-total">0</span>
+        </div>
+        <div class="score-vs">vs</div>
+        <div class="score-player-block p2-block">
+          <span class="score-player-name" id="score-name-p2">—</span>
+          <span class="score-player-pts" id="score-p2-total">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Barra de ronda -->
+    <div class="round-bar">
+      <div class="round-info">
+        <span id="round-label" class="round-num">Ronda 1</span>
+        <span class="round-letter-text">· Jugamos con la letra</span>
+        <span id="letter-badge" class="letter-inline">?</span>
+      </div>
+      <div class="round-actions">
+        <button class="btn btn-finish btn-sm" id="btn-finish-me" onclick="handleFinish()">
+          ✅ Finalizar
+        </button>
+        <button class="btn btn-secondary btn-sm" id="btn-new-round" onclick="newRound()" style="display:none">
+          🎮 Siguiente Ronda
+        </button>
+      </div>
+    </div>
+
+    <!-- Mi nombre sobre el panel -->
+    <div class="my-panel-label">
+      <span id="my-panel-name">Tus respuestas</span>
+    </div>
+
+    <!-- Mi panel -->
+    <div id="my-panel" class="player-panel active">
+      <div class="fields-table" id="my-fields"></div>
+    </div>
+
+  </div>
+
+  <!-- ========== OVERLAY ELEGIR LETRA ========== -->
+  <div id="letter-overlay" class="overlay hidden">
+    <div class="letter-reveal-card">
+      <p class="letter-reveal-pre">⚡ ¿Con qué letra jugamos?</p>
+      <div class="letter-reveal-big" id="letter-reveal-big">?</div>
+      <div class="letter-picker" id="letter-picker"></div>
+      <button class="btn btn-primary" id="btn-letter-go" onclick="confirmLetter()" disabled>
+        ¡Vamos! 🚀
+      </button>
+    </div>
+  </div>
+
+  <!-- ========== OVERLAY CUENTA REGRESIVA ========== -->
+  <div id="countdown-overlay" class="overlay hidden">
+    <div class="countdown-card">
+      <div class="countdown-icon">🚨</div>
+      <p class="countdown-msg" id="countdown-msg">¡El otro jugador terminó!</p>
+      <div class="countdown-number" id="countdown-number">5</div>
+      <p class="countdown-sub">¡Apúrate, escribe rápido! 🏃‍♂️💨</p>
+    </div>
+  </div>
+  <!-- ========== OVERLAY GANADOR RONDA ========== -->
+  <div id="winner-overlay" class="overlay hidden">
+    <div class="countdown-card">
+      <div class="countdown-icon" id="winner-icon">🏆</div>
+      <p class="countdown-msg" id="winner-msg">¡NANDO ganó la ronda!</p>
+      <div class="countdown-number" id="winner-pts" style="font-size: 3rem; margin: 10px 0;">350 pts</div>
+      <button class="btn btn-primary" style="margin-top: 20px;" onclick="closeWinnerOverlay()">¡Genial!</button>
+    </div>
+  </div>
+
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
