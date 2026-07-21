@@ -837,6 +837,48 @@ html, body {
 /* ============================================
    COUNTDOWN
    ============================================ */
+#countdown-overlay {
+  inset: auto;
+  top: 20px;
+  right: 20px;
+  bottom: auto;
+  left: auto;
+  background: transparent;
+  backdrop-filter: none;
+  padding: 0;
+  pointer-events: none;
+}
+
+#countdown-overlay .countdown-card {
+  padding: 15px 20px;
+  max-width: 220px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  pointer-events: auto;
+}
+
+#countdown-overlay .countdown-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0;
+}
+
+#countdown-overlay .countdown-msg {
+  font-size: 0.95rem;
+  margin-bottom: 0;
+  line-height: 1.2;
+}
+
+#countdown-overlay .countdown-number {
+  font-size: 3.5rem;
+}
+
+#countdown-overlay .countdown-sub {
+  display: none;
+}
+
 .countdown-card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -987,3 +1029,4 @@ html, body {
   color: var(--accent);
   letter-spacing: .03em;
 }
+
