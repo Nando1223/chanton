@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -7,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=4" />
 </head>
 <body>
 
@@ -90,6 +91,9 @@
         <button class="btn btn-finish btn-sm" id="btn-finish-me" onclick="handleFinish()">
           ✅ Finalizar
         </button>
+        <button class="btn btn-primary btn-sm" id="btn-force-new-round" onclick="newRound()" style="display:none; margin-left:10px;">
+          🔄 Nueva Partida
+        </button>
         <button class="btn btn-secondary btn-sm" id="btn-new-round" onclick="newRound()" style="display:none">
           🎮 Siguiente Ronda
         </button>
@@ -124,11 +128,20 @@
   <div id="countdown-overlay" class="overlay hidden">
     <div class="countdown-card">
       <div class="countdown-icon">🚨</div>
-      <p class="countdown-msg" id="countdown-msg">¡El otro jugador terminó!</p>
-      <div class="countdown-number" id="countdown-number">5</div>
+      <p class="countdown-msg" id="countdown-msg" style="font-size: 2.2rem; text-transform: uppercase; margin-bottom: -10px; font-weight: 900; color: var(--primary);">¡Chanton!</p>
+      <div class="countdown-number" id="countdown-number">10</div>
       <p class="countdown-sub">¡Apúrate, escribe rápido! 🏃‍♂️💨</p>
     </div>
   </div>
+  <!-- ========== OVERLAY TRANSICIÓN PUNTUACIÓN ========== -->
+  <div id="transition-overlay" class="overlay hidden">
+    <div class="countdown-card">
+      <div class="countdown-icon">💯</div>
+      <p class="countdown-msg">¡Tiempo terminado!</p>
+      <p class="countdown-sub" style="font-size: 1.5rem; margin-top: 15px; color: var(--primary);">¡Vamos a contar los puntos!</p>
+    </div>
+  </div>
+
   <!-- ========== OVERLAY GANADOR RONDA ========== -->
   <div id="winner-overlay" class="overlay hidden">
     <div class="countdown-card">
@@ -144,7 +157,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="firebase-config.js"></script>
-  <script src="game.js"></script>
+  <script src="game.js?v=3"></script>
 </body>
 </html>
 
