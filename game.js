@@ -166,6 +166,11 @@ function startGame() {
     roomRef.child('round').once('value').then(snap => {
       if (snap.val() === 0) startRound();
     });
+    const forceBtn = document.getElementById('btn-force-new-round');
+    if (forceBtn) forceBtn.style.display = 'inline-block';
+  } else {
+    const forceBtn = document.getElementById('btn-force-new-round');
+    if (forceBtn) forceBtn.style.display = 'none';
   }
 }
 
@@ -217,8 +222,13 @@ function listenRoom() {
     }
 
     if (status === 'scoring') {
-      // Abrir overlay de puntaje
-      openScoringOverlay();
+      const transOverlay = document.getElementById('transition-overlay');
+      if (transOverlay) transOverlay.classList.remove('hidden');
+      
+      setTimeout(() => {
+        if (transOverlay) transOverlay.classList.add('hidden');
+        openScoringOverlay();
+      }, 2500); // Mostrar por 2.5 segundos
     }
   });
   listeners.push(() => roomRef.child('status').off('value', unsubStatus));
@@ -398,18 +408,30 @@ function buildMyFields() {
         </div>
       </div>
       <div class="score-col hidden" id="scol-${field.key}">
-        <input
-          class="score-input"
-          id="myscore-${field.key}"
-          type="number"
-          min="0" max="100"
-          placeholder="0"
-          oninput="updateLiveScore()"
-        />
+        <div class="score-quick-btns">
+          <button class="sq-btn" id="sq-${field.key}-0" onclick="setQuickScore('${field.key}', 0)">0</button>
+          <button class="sq-btn" id="sq-${field.key}-5" onclick="setQuickScore('${field.key}', 5)">5</button>
+          <button class="sq-btn" id="sq-${field.key}-10" onclick="setQuickScore('${field.key}', 10)">10</button>
+        </div>
+        <input type="hidden" id="myscore-${field.key}" value="" />
       </div>
     `;
     container.appendChild(row);
   });
+}
+
+function setQuickScore(key, val) {
+  const inp = document.getElementById(`myscore-${key}`);
+  if (inp) inp.value = val;
+  
+  [0, 5, 10].forEach(v => {
+    const b = document.getElementById(`sq-${key}-${v}`);
+    if (b) b.classList.remove('active');
+  });
+  const activeBtn = document.getElementById(`sq-${key}-${val}`);
+  if (activeBtn) activeBtn.classList.add('active');
+  
+  updateLiveScore();
 }
 
 function resetMyFields() {
@@ -423,6 +445,11 @@ function resetMyFields() {
     if (scol) { scol.classList.add('hidden'); scol.style.display = 'none'; }
     if (oppBox) { oppBox.classList.add('hidden'); oppBox.style.display = 'none'; }
     if (myscore) myscore.value = '';
+    
+    [0, 5, 10].forEach(v => {
+      const b = document.getElementById(`sq-${field.key}-${v}`);
+      if (b) b.classList.remove('active');
+    });
   });
   document.getElementById('inline-score-actions').classList.add('hidden');
 }
@@ -519,11 +546,8 @@ function showCountdown() {
       clearInterval(interval);
       overlay.classList.add('hidden');
       
-      // Solo bloqueamos los inputs, el usuario aún debe presionar "Finalizar"
-      FIELDS.forEach(field => {
-        const inp = document.getElementById(`inp-${field.key}`);
-        if (inp) inp.disabled = true;
-      });
+      // Bloqueamos los inputs y finalizamos automáticamente la partida
+      handleFinish();
     }
   }, 1000);
 }
@@ -531,11 +555,15 @@ function showCountdown() {
 // ================================================================
 //  PUNTUACIÓN
 // ================================================================
+let myBaseScore = 0;
+
 function openScoringOverlay() {
   document.getElementById('btn-finish-me').style.display = 'none';
 
   roomRef.once('value').then(snap => {
     const data = snap.val();
+    myBaseScore = data[me.slot].baseScore || 0;
+    
     const otherSlot = me.slot === 'p1' ? 'p2' : 'p1';
     const oppName = data[otherSlot].name || 'Oponente';
 
@@ -547,19 +575,12 @@ function openScoringOverlay() {
         scol.style.display = 'flex';
       }
       
-      // 2. Llenar y mostrar respuesta del oponente
-      const oppValue = data[otherSlot].answers?.[field.key] || '(vacío)';
-      document.getElementById(`opp-name-${field.key}`).textContent = oppName + ':';
-      document.getElementById(`opp-text-${field.key}`).textContent = oppValue;
-      
+      // 2. Ocultar la respuesta del oponente durante la calificación personal
       const oppBox = document.getElementById(`opp-box-${field.key}`);
       if (oppBox) {
-        oppBox.classList.remove('hidden');
-        oppBox.style.display = 'block';
+        oppBox.classList.add('hidden');
+        oppBox.style.display = 'none';
       }
-      
-      // Colorear el oponente (p1 vs p2 colors)
-      document.getElementById(`opp-name-${field.key}`).style.color = otherSlot === 'p1' ? 'var(--p1-color)' : 'var(--p2-color)';
     });
 
     // 3. Mostrar el botón de guardar puntaje abajo
@@ -582,12 +603,8 @@ function updateLiveScore() {
     myPoints[field.key] = val || '';
   });
 
-  // Sumar al puntaje base y subir a Firebase en vivo
-  roomRef.child(`${me.slot}/baseScore`).once('value').then(snap => {
-    const base = snap.val() || 0;
-    roomRef.child(`${me.slot}/score`).set(base + roundTotal);
-  });
-  
+  // Sumar al puntaje base (ahora síncrono para evitar desórdenes de red)
+  roomRef.child(`${me.slot}/score`).set(myBaseScore + roundTotal);
   roomRef.child(`${me.slot}/points`).set(myPoints);
   roomRef.child(`${me.slot}/pointsComplete`).set(allFilled);
 }
