@@ -499,7 +499,7 @@ function showCountdown() {
   const numEl   = document.getElementById('countdown-number');
   overlay.classList.remove('hidden');
 
-  let count = 5;
+  let count = 10;
   numEl.textContent = count;
   
   // Alarma inicial
