@@ -1,3 +1,4 @@
+
 /* ============================================
    CHANTON N' CHANTON – Estilos Principales
    ============================================ */
@@ -440,7 +441,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 15px;
 }
 
 .score-player-block {
@@ -448,25 +449,25 @@ html, body {
   flex-direction: column;
   align-items: center;
   gap: 1px;
-  min-width: 54px;
+  min-width: 60px;
 }
 
 .score-player-name {
-  font-size: clamp(.6rem, 2.8vw, .72rem);
+  font-size: clamp(.8rem, 3.5vw, 1rem);
   font-weight: 700;
   letter-spacing: .03em;
   text-transform: uppercase;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 80px;
+  max-width: 100px;
 }
 
 .p1-block .score-player-name { color: var(--p1-color); }
 .p2-block .score-player-name { color: var(--p2-color); }
 
 .score-player-pts {
-  font-size: clamp(1.3rem, 6vw, 1.7rem);
+  font-size: clamp(1.8rem, 8vw, 2.5rem);
   font-weight: 900;
   line-height: 1;
 }
@@ -475,7 +476,7 @@ html, body {
 .p2-block .score-player-pts { color: var(--p2-color); }
 
 .score-vs {
-  font-size: .75rem;
+  font-size: 1rem;
   font-weight: 800;
   color: var(--text-muted);
   letter-spacing: .05em;
@@ -687,37 +688,47 @@ html, body {
   background: #eef0fb;
 }
 
-/* Score input – aparece después de finalizar */
 .score-col {
   display: none;
-  flex-direction: column;
   align-items: center;
-  gap: 2px;
+  justify-content: center;
 }
 .score-col.visible { display: flex; }
 
-.score-input {
-  width: 52px;
-  padding: 8px 6px;
-  text-align: center;
-  font-size: 1rem;
-  font-weight: 700;
-  background: var(--bg3);
-  border-color: transparent;
-  border-radius: var(--radius-sm);
-  -moz-appearance: textfield;
+.score-quick-btns {
+  display: flex;
+  gap: 6px;
 }
-.score-input::-webkit-outer-spin-button,
-.score-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-.score-input:focus { border-color: var(--accent); }
-
-.score-lbl {
-  font-size: .6rem;
+.sq-btn {
+  background: #eef0fb;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  width: 40px;
+  height: 36px;
+  font-weight: 800;
+  font-size: .95rem;
   color: var(--text-muted);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .04em;
+  cursor: pointer;
+  transition: all .2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sq-btn:hover {
+  background: #fff;
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.sq-btn.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(59,126,245,.35);
+  transform: scale(1.05);
 }
 
 /* ============================================
@@ -1028,5 +1039,70 @@ html, body {
   border: 1px solid rgba(247,201,72,.3);
   color: var(--accent);
   letter-spacing: .03em;
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE
+   ============================================ */
+@media (max-width: 600px) {
+  .game-header {
+    padding: 8px 10px 6px;
+    gap: 6px;
+  }
+  
+  .header-flag { font-size: 1rem; }
+  .header-title { font-size: .8rem; }
+  
+  .score-player-name {
+    font-size: .75rem;
+    max-width: 70px;
+  }
+  .score-player-pts {
+    font-size: 1.5rem;
+  }
+  .score-vs {
+    font-size: .8rem;
+    margin-top: 6px;
+  }
+  
+  .field-row {
+    grid-template-columns: 85px 1fr auto;
+    padding: 5px 8px;
+    gap: 6px;
+  }
+  
+  .field-label {
+    font-size: .7rem;
+    gap: 4px;
+  }
+  
+  .field-input {
+    padding: 8px 10px;
+    font-size: .9rem;
+  }
+  
+  .score-quick-btns {
+    gap: 4px;
+  }
+  
+  .sq-btn {
+    width: 32px;
+    height: 30px;
+    font-size: .85rem;
+    border-radius: 6px;
+  }
+  
+  .round-bar {
+    padding: 8px 10px;
+  }
+  
+  .round-num, .round-letter-text {
+    font-size: .75rem;
+  }
+  
+  .btn-sm {
+    padding: 7px 10px;
+    font-size: .75rem;
+  }
 }
 
